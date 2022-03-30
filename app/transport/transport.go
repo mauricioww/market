@@ -31,6 +31,20 @@ func NewHttpServer(endpoints Endpoints) http.Handler {
 		opt,
 	))
 
+	r.Methods("PUT").Path("/api/products/{id}").Handler(httpGokit.NewServer(
+		endpoints.UpdateProduct,
+		decodeUpdateProductRequest,
+		encodeResponse,
+		opt,
+	))
+
+	r.Methods("DELETE").Path("/api/products/{id}").Handler(httpGokit.NewServer(
+		endpoints.DeleteProduct,
+		decodeDeleteUserRequest,
+		encodeResponse,
+		opt,
+	))
+
 	return r
 }
 
@@ -44,7 +58,7 @@ func middleware(next http.Handler) http.Handler {
 func encodeError(_ context.Context, err error, rw http.ResponseWriter) {
 	r, ok := err.(errors.Resolver)
 	if !ok {
-		panic("Unsupported error")
+		r = errors.NewUnknownError()
 	}
 	rw.Header().Set("Content-Type", "application/json; charset=utf-8")
 	rw.WriteHeader(errors.ResolveHttp(r.ResolveCode()))
@@ -73,5 +87,34 @@ func decodeGetProductRequest(ctx context.Context, r *http.Request) (interface{},
 	}
 
 	request := GetProductRequest{Id: uint(id)}
+	return request, nil
+}
+
+func decodeUpdateProductRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	var req UpdateProductRequest
+	idParam := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return nil, err
+	}
+	err = json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Id = uint(id)
+	return req, nil
+}
+
+func decodeDeleteUserRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	idParam := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return nil, err
+	}
+
+	request := DeleteProductRequest{Id: uint(id)}
 	return request, nil
 }

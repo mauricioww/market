@@ -1,6 +1,7 @@
 package models
 
 type Product struct {
+	Id           uint
 	Name         string
 	SupplierId   uint
 	CategoryId   uint

@@ -115,7 +115,127 @@ func TestGetProduct(t *testing.T) {
 
 			assert.Equal(res, tc.res)
 			assert.Equal(err, tc.err)
+		})
+	}
+}
 
+func TestUpdateProduct(t *testing.T) {
+	repository := new(service.RepositoryMock)
+	logger := log.NewLogfmtLogger(os.Stderr)
+	srv := service.NewService(repository, logger)
+
+	testCases := []struct {
+		testName string
+		data     models.Product
+		res      bool
+		err      error
+	}{
+		{
+			testName: "product updated success",
+			data: models.Product{
+				Id:           1,
+				Name:         "fake item",
+				SupplierId:   12,
+				CategoryId:   1,
+				UnitsInStock: 100,
+				UnitPrice:    100.2,
+				Discontinued: false,
+			},
+			res: true,
+			err: nil,
+		},
+		{
+			testName: "no field name error",
+			data: models.Product{
+				UnitsInStock: 10,
+				UnitPrice:    100.40,
+			},
+			res: false,
+			err: errors.NewBadRequestNameError(),
+		},
+		{
+			testName: "no field units_in_stock error",
+			data: models.Product{
+				Name:      "simple product",
+				UnitPrice: 100.40,
+			},
+			res: false,
+			err: errors.NewBadRequestUnitsInStockError(),
+		},
+		{
+			testName: "no field unit_price error",
+			data: models.Product{
+				Name:         "simple product",
+				UnitsInStock: 10,
+			},
+			res: false,
+			err: errors.NewBadRequestUnitPriceError(),
+		},
+		{
+			testName: "product not found error",
+			data: models.Product{
+				Id:           0,
+				Name:         "fake item",
+				SupplierId:   12,
+				CategoryId:   1,
+				UnitsInStock: 100,
+				UnitPrice:    100.2,
+				Discontinued: false,
+			},
+			res: false,
+			err: errors.NewProductNotFoundError(),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.testName, func(t *testing.T) {
+			assert := assert.New(t)
+
+			repository.On("UpdateProduct", tc.data.Id, tc.data.Name, tc.data.SupplierId, tc.data.CategoryId,
+				tc.data.UnitsInStock, tc.data.UnitPrice, tc.data.Discontinued).Return(tc.res, tc.err)
+			res, err := srv.UpdateProduct(tc.data.Id, tc.data.Name, tc.data.SupplierId, tc.data.CategoryId,
+				tc.data.UnitsInStock, tc.data.UnitPrice, tc.data.Discontinued)
+
+			assert.Equal(res, tc.res)
+			assert.Equal(err, tc.err)
+		})
+	}
+}
+
+func TestDeleteProduct(t *testing.T) {
+	repository := new(service.RepositoryMock)
+	logger := log.NewLogfmtLogger(os.Stderr)
+	srv := service.NewService(repository, logger)
+
+	testCases := []struct {
+		testName string
+		data     uint
+		res      bool
+		err      error
+	}{
+		{
+			testName: "product found success",
+			data:     1,
+			res:      true,
+			err:      nil,
+		},
+		{
+			testName: "product not found error",
+			data:     0,
+			res:      false,
+			err:      errors.NewProductNotFoundError(),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.testName, func(t *testing.T) {
+			assert := assert.New(t)
+
+			repository.On("DeleteProduct", tc.data).Return(tc.res, tc.err)
+			res, err := srv.DeleteProduct(tc.data)
+
+			assert.Equal(res, tc.res)
+			assert.Equal(err, tc.err)
 		})
 	}
 }

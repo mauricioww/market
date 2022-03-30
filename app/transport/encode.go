@@ -18,3 +18,11 @@ type GetProductResponse struct {
 	UnitPrice    float64 `json:"unit_price"`
 	Discontinued bool    `json:"discontinued"`
 }
+
+type UpdateProductResponse struct {
+	Success bool `json:"success"`
+}
+
+type DeleteProductResponse struct {
+	Success bool `json:"success"`
+}
