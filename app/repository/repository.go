@@ -25,7 +25,7 @@ const (
 	`
 
 	deleteProduct = `
-		UPDATE PRODUCTS SET discontinued = true WHERE id = ?
+		DELETE FROM PRODUCTS WHERE id = ?
 	`
 )
 
@@ -37,6 +37,8 @@ type Repository struct {
 type Repositorier interface {
 	CreateProduct(name string, supplierId uint, categoryId uint, unitsInStock uint, unitPrice float64, discontinued bool) (int32, error)
 	GetProduct(id uint) (models.Product, error)
+	UpdateProduct(id uint, name string, supplierId uint, categoryId uint, unitsInStock uint, unitPrice float64, discontinued bool) (bool, error)
+	DeleteProduct(id uint) (bool, error)
 }
 
 func NewRepository(mysql *sql.DB, l log.Logger) *Repository {
@@ -70,4 +72,30 @@ func (r *Repository) GetProduct(id uint) (models.Product, error) {
 	}
 
 	return p, nil
+}
+
+func (r *Repository) UpdateProduct(id uint, name string, supplierId uint, categoryId uint, unitsInStock uint, unitPrice float64, discontinued bool) (bool, error) {
+
+	if err := r.db.QueryRow(getProduct, id).Scan(); err == sql.ErrNoRows {
+		return false, errors.NewProductNotFoundError()
+	}
+
+	if _, err := r.db.Exec(updateProduct, name, supplierId, categoryId, unitsInStock, unitPrice, discontinued, id); err != nil {
+		return false, errors.NewServerFailError()
+	}
+
+	return true, nil
+}
+
+func (r *Repository) DeleteProduct(id uint) (bool, error) {
+
+	if err := r.db.QueryRow(getProduct, id).Scan(); err == sql.ErrNoRows {
+		return false, errors.NewProductNotFoundError()
+	}
+
+	if _, err := r.db.Exec(deleteProduct, id); err != nil {
+		return false, errors.NewServerFailError()
+	}
+
+	return true, nil
 }
