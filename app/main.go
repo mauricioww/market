@@ -11,9 +11,9 @@ import (
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/mauricioww/market/server/repository"
-	"github.com/mauricioww/market/server/service"
-	"github.com/mauricioww/market/server/transport"
+	"github.com/mauricioww/market/app/repository"
+	"github.com/mauricioww/market/app/service"
+	"github.com/mauricioww/market/app/transport"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 		logger = log.With(
 			logger,
 			"service",
-			"account",
+			"market",
 			"time",
 			log.DefaultTimestampUTC,
 			"caller",
