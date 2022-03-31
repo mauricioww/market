@@ -2,7 +2,7 @@
 
 ## Setup
 
-As the environment was dockerized, you need to have docker and docker-compose tools in order to be able to run the microserve.
+As the environment was dockerized, you need to have `docker` and `docker-compose` tools in order to be able to run the microserve.
 
 Command to run app:
 ```
