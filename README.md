@@ -39,7 +39,7 @@ You must send the request as the following example:
   localhost:8080/api/products/1
 ``
 
-Here you will find the [postman collection](https://drive.google.com/file/d/1CWp-RNAMqMhka95_4oy1BbtIYdd3FN3p/view?usp=sharing) I used with the microservice.
+[Here](https://drive.google.com/file/d/1CWp-RNAMqMhka95_4oy1BbtIYdd3FN3p/view?usp=sharing) you will find the postman collection I used with the microservice.
 
 
 Finally, as long as you are in the root app directory you can run the tests with the following command:
