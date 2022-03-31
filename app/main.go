@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/caarlos0/env/v6"
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
 	_ "github.com/go-sql-driver/mysql"
@@ -15,6 +16,14 @@ import (
 	"github.com/mauricioww/market/app/service"
 	"github.com/mauricioww/market/app/transport"
 )
+
+type constants struct {
+	DbUser string `env:"DB_USER,required"`
+	DbPwd  string `env:"DB_PASSWORD,required"`
+	DbHost string `env:"DB_HOST,required"`
+	DbPort int    `env:"DB_PORT" envDefault:"3306"`
+	DbName string `env:"DB_NAME" envDefault:"grpc_user"`
+}
 
 func main() {
 	var logger log.Logger
@@ -36,10 +45,17 @@ func main() {
 
 	defer level.Info(logger).Log("msg", "service ended")
 
+	cts := constants{}
+
+	if err := env.Parse(&cts); err != nil {
+		level.Error(logger).Log("exit", err)
+		os.Exit(-1)
+	}
+
 	var db *sql.DB
 	{
 		var err error
-		mysqlAddr := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v", "mauricio", "password", "localhost", 3306, "mark")
+		mysqlAddr := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v", cts.DbUser, cts.DbPwd, cts.DbHost, cts.DbPort, cts.DbName)
 		db, err = sql.Open("mysql", mysqlAddr)
 		if err != nil {
 			level.Error(logger).Log("exit", err)

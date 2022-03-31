@@ -15,6 +15,7 @@ require (
 )
 
 require (
+	github.com/caarlos0/env/v6 v6.9.1
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gorilla/mux v1.8.0

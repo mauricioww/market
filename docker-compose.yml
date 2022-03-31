@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+
+  app:
+    container_name: microservice
+    image: market:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: market
+    ports:
+      - 8080:8080
+    networks:
+      - market_network
+    depends_on:
+      - mysqldb
+    environment:
+      - DB_HOST=mysqldb
+      - DB_PORT=3306
+      - DB_NAME=market
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  mysqldb:
+    image: mysql
+    container_name: market_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=market
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - market_db:/var/lib/mysql
+      - ./app/conf/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - market_network
+
+
+volumes:
+  market_db:
+    name: market
+
+
+networks:
+  market_network:
+    driver: bridge
+    name: market
