@@ -41,5 +41,5 @@ You must send the request as the following example:
 Finally, as long as you are in the root app directory you can run the tests with the following command:
 
 ``
-  golang test ./... -v -cover
+  go test ./... -v -cover
 ``
