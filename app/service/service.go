@@ -60,8 +60,7 @@ func (s *Service) CreateProduct(name string, supplierId uint, categoryId uint, u
 }
 
 func (s *Service) GetProduct(id uint) (models.Product, error) {
-	l := log.With(s.logger, "method", "GetProduct")
-	l.Log("id", id)
+	l := log.With(s.logger, "method", "GetProduct", "id", id)
 
 	res, err := s.repository.GetProduct(id)
 
@@ -75,8 +74,7 @@ func (s *Service) GetProduct(id uint) (models.Product, error) {
 }
 
 func (s *Service) UpdateProduct(id uint, name string, supplierId uint, categoryId uint, unitsInStock uint, unitPrice float64, discontinued bool) (bool, error) {
-	l := log.With(s.logger, "method", "UpdateProduct")
-	l.Log("id", id)
+	l := log.With(s.logger, "method", "UpdateProduct", "id", id)
 
 	if name == "" {
 		e := errors.NewBadRequestNameError()
@@ -108,8 +106,7 @@ func (s *Service) UpdateProduct(id uint, name string, supplierId uint, categoryI
 }
 
 func (s *Service) DeleteProduct(id uint) (bool, error) {
-	l := log.With(s.logger, "method", "DeleteProduct")
-	l.Log("id", id)
+	l := log.With(s.logger, "method", "DeleteProduct", "id", id)
 
 	res, err := s.repository.DeleteProduct(id)
 
