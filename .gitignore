@@ -1,2 +1,5 @@
-# Private passwords and users
-/.env
+#   -> File with private passwords and users
+#   In a real scenario this file must be hidden, but as this project will be shared
+#   with other people I let you access to the private file. 
+
+# /.env
